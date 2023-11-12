@@ -1,0 +1,9 @@
+-r requirements.txt
+anyio
+freezegun
+httpx
+mypy
+pre-commit
+pylint
+pytest
+ruff

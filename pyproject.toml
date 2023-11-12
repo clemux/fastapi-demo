@@ -1,0 +1,19 @@
+[build-system]
+requires = ["setuptools"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "fastapi_demo"
+version = "0.1.0"
+dependencies = [
+    "aiomysql",
+    "fastapi",
+    "gunicorn",
+    "pydantic",
+    "pydantic-settings",
+    "uvicorn",
+    ]
+requires-python = ">=3.10"
+
+[tool.setuptools.packages.find]
+include = ["app"]
