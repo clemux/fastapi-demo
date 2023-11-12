@@ -6,4 +6,5 @@ mypy
 pre-commit
 pylint
 pytest
+pytest-httpx
 ruff

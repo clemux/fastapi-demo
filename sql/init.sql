@@ -1,4 +1,3 @@
-use mysql;
 CREATE TABLE IF NOT EXISTS users(
     id VARCHAR(36) PRIMARY KEY,
     email VARCHAR(254) UNIQUE,
@@ -9,7 +8,7 @@ CREATE TABLE IF NOT EXISTS users(
 CREATE TABLE IF NOT EXISTS activation_codes(
     id VARCHAR(36) PRIMARY KEY,
     user_id VARCHAR(36),
-    code INT(4),
+    code VARCHAR(4),
     expiration DATETIME,
     FOREIGN KEY (user_id) REFERENCES users(id)
 );

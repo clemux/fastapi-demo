@@ -7,10 +7,14 @@ name = "fastapi_demo"
 version = "0.1.0"
 dependencies = [
     "aiomysql",
-    "fastapi",
+    "cryptography",
+    "fastapi>=0.104.0,<0.105.0",
+    "httpx",
     "gunicorn",
+    "passlib",
     "pydantic",
     "pydantic-settings",
+    "python-json-logger",
     "uvicorn",
     ]
 requires-python = ">=3.10"

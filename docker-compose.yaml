@@ -1,12 +1,20 @@
-version: "3"
+version: "3.4"
 
 services:
   app:
     build:
       context: .
-      dockerfile: docker/Dockerfile
+      dockerfile: docker/app.Dockerfile
+    depends_on:
+        db:
+            condition: service_healthy
+        email:
+            condition: service_healthy
+    env_file:
+      - .env
     ports:
       - "8080:8080"
+
   db:
     image: mysql
     command: --default-authentication-plugin=mysql_native_password
@@ -19,6 +27,72 @@ services:
     volumes:
       - dbdata:/var/lib/mysql
     ports:
-      - "3306:3306"
+      - "3306:3306"  # port exposed for debugging purposes
+    healthcheck:
+      test: ["CMD", "mysqladmin" ,"ping", "--user", "mysql", "--password=mysql"]
+
+  email:
+    build:
+      context: .
+      dockerfile: docker/fake_email_service.Dockerfile
+    ports:
+      - "8081:8080"  # port exposed for running tests outside docker
+    healthcheck:
+      test: ["CMD", "curl", "--fail", "http://localhost:8080/health"]
+
+  init-db:
+    image: mysql
+    command: ["bash", "-c", "mysql -h db --user mysql --password=mysql -D mysql < /data.sql"]
+    volumes:
+      - ./sql/init.sql:/data.sql
+    depends_on:
+      db:
+        condition: service_healthy
+    profiles:
+      - setup
+
+  test-db:
+    image: mysql
+    command: --default-authentication-plugin=mysql_native_password
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_USER: mysql
+      MYSQL_PASSWORD: mysql
+      MYSQL_DATABASE: tests
+      MYSQL_PORT: 3306
+    ports:
+      - "3307:3306"  # port exposed so that we can run tests outside docker
+    healthcheck:
+      test: ["CMD", "mysqladmin" ,"ping", "--user", "mysql", "--password=mysql", "--port=3306"]
+      start_period: 40s
+      interval: 4s
+      retries: 7
+    profiles:
+      - test
+
+  tests:
+    build:
+      context: .
+      dockerfile: docker/dev.Dockerfile
+    environment:
+      - DATABASE_HOST=test-db
+      - DATABASE_USER=mysql
+      - DATABASE_PASSWORD=mysql
+      - DATABASE_NAME=tests
+      - EMAIL_SERVICE_BASE_URL=http://email:8080
+    depends_on:
+      email:
+        condition: service_healthy
+      test-db:
+        condition: service_healthy
+    command: ["pytest"]
+    volumes:
+      - "./app:/opt/fastapi-demo/app"
+      - "./tests:/opt/fastapi-demo/tests"
+      - "./sql/init.sql:/opt/fastapi-demo/sql/init.sql"
+    profiles:
+      - test
+
 volumes:
   dbdata:

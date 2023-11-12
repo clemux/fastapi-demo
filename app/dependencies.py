@@ -32,7 +32,6 @@ async def get_current_user(
     db: Annotated[aiomysql.Connection, Depends(get_db)],
 ) -> UserSchema:
     """Check username and password and return current user."""
-    # TODO: is this susceptible to timing attacks?
     user = await get_user(db, credentials.username)
     if not (user and pbkdf2_sha256.verify(credentials.password, user.password)):
         raise HTTPException(

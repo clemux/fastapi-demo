@@ -8,13 +8,16 @@ from pydantic_settings import BaseSettings
 class Settings(BaseSettings):
     """Settings for the application, read from the environment."""
 
-    database_host: str = "localhost"
-    database_user: str = "mysql"
-    database_password: str = "mysql"
-    database_name: str = "mysql"
+    database_host: str
+    database_user: str
+    database_password: str
+    database_name: str
     database_port: int = 3306
-    smtp_host: str = ""
-    smtp_port: int = 0
+    email_service_base_url: str
+    email_service_endpoint: str = "/email"
+    email_service_timeout_seconds: int = 5
+    from_email: str = "app@example.com"
+    code_expiration_seconds: int = 60
 
 
 @lru_cache
