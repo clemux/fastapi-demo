@@ -17,6 +17,11 @@ def test_post_users(client, httpx_mock):
     assert response.json() == {"message": "User created: user@example.com"}
 
 
+def test_post_users_with_invalid_email_field_should_return_422(client):
+    response = client.post("/users/", json={"email": "user", "password": "password"})
+    assert response.status_code == 422
+
+
 @pytest.mark.anyio
 async def test_post_users_with_existing_email_should_return_400(async_client, user):
     response = await async_client.post(

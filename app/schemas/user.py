@@ -1,13 +1,13 @@
 """User schemas."""
 import uuid
 
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, Field, EmailStr
 
 
 class UserCreateSchema(BaseModel):
     """Schema for the registering endpoint's request body."""
 
-    email: str = Field(
+    email: EmailStr = Field(
         json_schema_extra={
             "example": "user@example.com",
         }
@@ -29,7 +29,7 @@ class UserSchema(BaseModel):
     """Represents a user in the database."""
 
     id: uuid.UUID = Field()
-    email: str
+    email: EmailStr
     activated: bool
     password: str = Field()
 

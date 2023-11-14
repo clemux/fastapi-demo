@@ -12,7 +12,7 @@ dependencies = [
     "httpx",
     "gunicorn",
     "passlib",
-    "pydantic",
+    "pydantic[email]",
     "pydantic-settings",
     "python-json-logger",
     "uvicorn",
