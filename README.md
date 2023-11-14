@@ -69,6 +69,15 @@ The mysql database is stored in a persistent docker volume. To clean it, you can
 docker compose down -v
 ```
 
+If you have run tests before, you should also remove the `tests` containers and volumes/network:
+
+```bash
+docker compose --profile test down -v
+```
+
+Otherwise running tests will fail because not all networks have been deleted.
+
+
 ## Testing
 
 With the app running, you can register a user with
